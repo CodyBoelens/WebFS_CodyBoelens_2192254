@@ -1,0 +1,75 @@
+{
+    "nav": {
+        "home": "Home",
+        "menu": "Menu",
+        "offers": "Aanbiedingen",
+        "order": "Bestellen",
+        "language": "Taal"
+    },
+    "menu": {
+        "title": "Ons Menu",
+        "download_pdf": "Download Menu PDF",
+        "favourites": "Favorieten",
+        "sort_favourites_top": "Favorieten bovenaan",
+        "sort_alpha": "Alfabetisch (alleen favorieten)",
+        "no_favourites": "U heeft nog geen favorieten geselecteerd.",
+        "allergens": "Allergenen",
+        "add_favourite": "Voeg toe aan favorieten",
+        "remove_favourite": "Verwijder uit favorieten"
+    },
+    "order": {
+        "title": "Bestelling plaatsen",
+        "name": "Uw naam",
+        "phone": "Telefoonnummer",
+        "add_to_cart": "Toevoegen",
+        "remove": "Verwijderen",
+        "cart": "Winkelwagen",
+        "empty_cart": "Winkelwagen is leeg",
+        "total": "Totaal",
+        "place_order": "Bestelling plaatsen",
+        "thank_you": "Bedankt voor uw bestelling!",
+        "order_number": "Bestelnummer",
+        "print_qr": "Print QR Code"
+    },
+    "tablet": {
+        "welcome": "Welkom bij De Gouden Draak",
+        "table": "Tafel",
+        "order_button": "Bestelling plaatsen",
+        "help_button": "Hulp vragen",
+        "help_sent": "Hulp is onderweg!",
+        "rounds_left": "Nog {n} ronde(s) mogelijk",
+        "wait_message": "U kunt pas over {minutes} minuten opnieuw bestellen.",
+        "max_rounds": "U heeft het maximum aantal bestellingen bereikt."
+    },
+    "kassa": {
+        "title": "Kassasysteem",
+        "search": "Zoek op naam of nummer...",
+        "filter_category": "Filter op categorie",
+        "note": "Opmerking",
+        "note_placeholder": "bv. geen ui",
+        "rice_choice": "Rijstkeuze",
+        "new_order": "Nieuwe bestelling",
+        "add_item": "Toevoegen",
+        "mark_paid": "Markeer als betaald",
+        "open_orders": "Open bestellingen"
+    },
+    "admin": {
+        "dashboard": "Dashboard",
+        "menu_management": "Menu beheer",
+        "reports": "Rapportages",
+        "add_product": "Gerecht toevoegen",
+        "edit_product": "Gerecht bewerken",
+        "delete_confirm": "Weet u zeker dat u dit gerecht wilt verwijderen?",
+        "save": "Opslaan",
+        "cancel": "Annuleren",
+        "download": "Downloaden",
+        "help_requests": "Hulpverzoeken",
+        "dismiss": "Afmelden"
+    },
+    "auth": {
+        "login": "Inloggen",
+        "email": "E-mailadres",
+        "password": "Wachtwoord",
+        "logout": "Uitloggen"
+    }
+}

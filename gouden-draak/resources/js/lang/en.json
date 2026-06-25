@@ -1,0 +1,75 @@
+{
+    "nav": {
+        "home": "Home",
+        "menu": "Menu",
+        "offers": "Offers",
+        "order": "Order",
+        "language": "Language"
+    },
+    "menu": {
+        "title": "Our Menu",
+        "download_pdf": "Download Menu PDF",
+        "favourites": "Favourites",
+        "sort_favourites_top": "Favourites on top",
+        "sort_alpha": "Alphabetically (favourites only)",
+        "no_favourites": "You have not selected any favourites yet.",
+        "allergens": "Allergens",
+        "add_favourite": "Add to favourites",
+        "remove_favourite": "Remove from favourites"
+    },
+    "order": {
+        "title": "Place an order",
+        "name": "Your name",
+        "phone": "Phone number",
+        "add_to_cart": "Add",
+        "remove": "Remove",
+        "cart": "Cart",
+        "empty_cart": "Your cart is empty",
+        "total": "Total",
+        "place_order": "Place order",
+        "thank_you": "Thank you for your order!",
+        "order_number": "Order number",
+        "print_qr": "Print QR Code"
+    },
+    "tablet": {
+        "welcome": "Welcome to De Gouden Draak",
+        "table": "Table",
+        "order_button": "Place order",
+        "help_button": "Request help",
+        "help_sent": "Help is on the way!",
+        "rounds_left": "{n} round(s) remaining",
+        "wait_message": "You can order again in {minutes} minutes.",
+        "max_rounds": "You have reached the maximum number of orders."
+    },
+    "kassa": {
+        "title": "Cash register",
+        "search": "Search by name or number...",
+        "filter_category": "Filter by category",
+        "note": "Note",
+        "note_placeholder": "e.g. no onions",
+        "rice_choice": "Rice choice",
+        "new_order": "New order",
+        "add_item": "Add",
+        "mark_paid": "Mark as paid",
+        "open_orders": "Open orders"
+    },
+    "admin": {
+        "dashboard": "Dashboard",
+        "menu_management": "Menu management",
+        "reports": "Reports",
+        "add_product": "Add dish",
+        "edit_product": "Edit dish",
+        "delete_confirm": "Are you sure you want to delete this dish?",
+        "save": "Save",
+        "cancel": "Cancel",
+        "download": "Download",
+        "help_requests": "Help requests",
+        "dismiss": "Dismiss"
+    },
+    "auth": {
+        "login": "Log in",
+        "email": "Email address",
+        "password": "Password",
+        "logout": "Log out"
+    }
+}
