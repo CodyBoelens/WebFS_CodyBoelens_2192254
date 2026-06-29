@@ -2,17 +2,49 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Origineel Gouden Draak font */
+@font-face {
+    font-family: 'chinese_takeawayregular';
+    src: url('/fonts/chinesetakeaway-webfont.woff2') format('woff2'),
+         url('/fonts/chinesetakeaway-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
 @layer base {
     html { @apply scroll-smooth; }
-    body { @apply text-gray-800; }
+    body {
+        background-color: #8B0000;
+        @apply text-gray-900;
+    }
+    a { @apply no-underline; }
 }
 
 @layer components {
+    /* Navigatieknoppen website stijl */
+    .gd-nav-link {
+        @apply text-white text-xl px-6 py-2 hover:text-yellow-300 transition-colors;
+    }
+
+    /* Content paneel - floralwhite zoals origineel */
+    .gd-content {
+        background-color: #FFFAF0;
+        border: 1px solid black;
+        @apply p-6;
+    }
+
+    /* Logo font */
+    .gd-logo-font {
+        font-family: 'chinese_takeawayregular', serif;
+        color: #FFFF00;
+    }
+
+    /* Admin/Kassa knoppen */
     .btn-primary {
         @apply bg-red-700 hover:bg-red-800 text-white font-semibold px-4 py-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2;
     }
     .btn-secondary {
-        @apply bg-white hover:bg-gray-100 text-gray-800 font-semibold px-4 py-2 rounded-lg border border-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2;
+        @apply bg-white hover:bg-gray-100 text-gray-800 font-semibold px-4 py-2 rounded-lg border border-gray-300 transition-colors;
     }
     .card {
         @apply bg-white rounded-xl shadow-sm border border-gray-100 p-4;

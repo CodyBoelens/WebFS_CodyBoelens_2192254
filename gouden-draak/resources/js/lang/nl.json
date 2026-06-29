@@ -1,19 +1,7 @@
 {
-    "nav": {
-        "home": "Home",
-        "menu": "Menu",
-        "offers": "Aanbiedingen",
-        "order": "Bestellen",
-        "language": "Taal"
-    },
     "menu": {
-        "title": "Ons Menu",
-        "download_pdf": "Download Menu PDF",
-        "favourites": "Favorieten",
         "sort_favourites_top": "Favorieten bovenaan",
         "sort_alpha": "Alfabetisch (alleen favorieten)",
-        "no_favourites": "U heeft nog geen favorieten geselecteerd.",
-        "allergens": "Allergenen",
         "add_favourite": "Voeg toe aan favorieten",
         "remove_favourite": "Verwijder uit favorieten"
     },
@@ -21,8 +9,6 @@
         "title": "Bestelling plaatsen",
         "name": "Uw naam",
         "phone": "Telefoonnummer",
-        "add_to_cart": "Toevoegen",
-        "remove": "Verwijderen",
         "cart": "Winkelwagen",
         "empty_cart": "Winkelwagen is leeg",
         "total": "Totaal",
@@ -32,7 +18,6 @@
         "print_qr": "Print QR Code"
     },
     "tablet": {
-        "welcome": "Welkom bij De Gouden Draak",
         "table": "Tafel",
         "order_button": "Bestelling plaatsen",
         "help_button": "Hulp vragen",
@@ -49,7 +34,6 @@
         "note_placeholder": "bv. geen ui",
         "rice_choice": "Rijstkeuze",
         "new_order": "Nieuwe bestelling",
-        "add_item": "Toevoegen",
         "mark_paid": "Markeer als betaald",
         "open_orders": "Open bestellingen"
     },

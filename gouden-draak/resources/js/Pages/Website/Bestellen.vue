@@ -1,91 +1,119 @@
 <template>
     <WebsiteLayout>
-        <div class="max-w-2xl mx-auto px-4 sm:px-6 py-8">
-            <h1 class="text-3xl font-bold text-red-800 mb-6">{{ t('order.title') }}</h1>
+        <div style="text-align: center;">
+            <h2 style="color: #8B0000;">{{ t('order.title') }}</h2>
+        </div>
 
-            <!-- Formulier klantgegevens -->
-            <div class="card mb-6">
-                <div class="grid sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1" for="name">
-                            {{ t('order.name') }} *
-                        </label>
-                        <input id="name" v-model="form.customer_name" type="text" class="form-input"
-                            :placeholder="t('order.name')" required aria-required="true" />
-                        <p v-if="errors.customer_name" class="text-red-600 text-xs mt-1">{{ errors.customer_name }}</p>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1" for="phone">
-                            {{ t('order.phone') }} *
-                        </label>
-                        <input id="phone" v-model="form.customer_phone" type="tel" class="form-input"
-                            placeholder="06-12345678" required aria-required="true" />
-                        <p v-if="errors.customer_phone" class="text-red-600 text-xs mt-1">{{ errors.customer_phone }}</p>
-                    </div>
-                </div>
-            </div>
+        <!-- Klantgegevens -->
+        <table style="width: 100%; margin-bottom: 15px; border-collapse: collapse;">
+            <tr>
+                <td style="padding: 5px; width: 50%;">
+                    <label style="display: block; font-weight: bold; margin-bottom: 3px; color: #8B0000;">
+                        {{ t('order.name') }} *
+                    </label>
+                    <input v-model="form.customer_name" type="text"
+                        style="width: 100%; padding: 5px; border: 1px solid #8B0000; box-sizing: border-box;"
+                        :placeholder="t('order.name')" required />
+                    <p v-if="errors.customer_name" style="color: red; font-size: 12px; margin: 2px 0 0;">{{ errors.customer_name }}</p>
+                </td>
+                <td style="padding: 5px; width: 50%;">
+                    <label style="display: block; font-weight: bold; margin-bottom: 3px; color: #8B0000;">
+                        {{ t('order.phone') }} *
+                    </label>
+                    <input v-model="form.customer_phone" type="tel"
+                        style="width: 100%; padding: 5px; border: 1px solid #8B0000; box-sizing: border-box;"
+                        placeholder="06-12345678" required />
+                    <p v-if="errors.customer_phone" style="color: red; font-size: 12px; margin: 2px 0 0;">{{ errors.customer_phone }}</p>
+                </td>
+            </tr>
+        </table>
 
-            <!-- Menu zoeken -->
-            <div class="mb-4">
-                <input v-model="search" type="search" class="form-input" :placeholder="t('kassa.search')"
-                    aria-label="Zoek gerecht" />
-            </div>
+        <hr style="border-color: #8B0000; margin: 10px 0;" />
 
-            <!-- Categoriefilter -->
-            <div class="flex flex-wrap gap-2 mb-4">
-                <button
-                    v-for="cat in allCategories" :key="cat.id"
-                    @click="activeCategory = activeCategory === cat.id ? null : cat.id"
-                    :class="['badge cursor-pointer transition-colors',
-                        activeCategory === cat.id
-                            ? 'bg-red-700 text-white'
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200']"
-                >
-                    {{ cat.name }}
-                </button>
-            </div>
+        <!-- Zoekbalk -->
+        <table style="width: 100%; margin-bottom: 10px;">
+            <tr>
+                <td style="padding: 0 5px 0 0;">
+                    <input v-model="search" type="search"
+                        style="width: 100%; padding: 5px; border: 1px solid #8B0000; box-sizing: border-box;"
+                        :placeholder="t('kassa.search')" />
+                </td>
+            </tr>
+        </table>
 
-            <!-- Gerechten -->
-            <div class="space-y-2 mb-6">
-                <div v-for="product in filteredProducts" :key="product.id"
-                    class="card flex items-center gap-3"
-                >
-                    <div class="flex-1 min-w-0">
-                        <span class="text-xs text-gray-400 font-mono">{{ product.menu_number }}</span>
-                        <p class="font-medium text-sm">{{ product.name }}</p>
-                        <p class="text-red-700 font-semibold text-sm">€{{ fmt(product.current_price) }}</p>
-                    </div>
-                    <button @click="addItem(product)" class="btn-primary text-sm py-1">
-                        {{ t('order.add_to_cart') }}
-                    </button>
-                </div>
-                <p v-if="filteredProducts.length === 0" class="text-gray-500 text-sm text-center py-4">
-                    Geen gerechten gevonden.
-                </p>
-            </div>
-
-            <!-- Winkelwagen -->
-            <div class="card mb-6" aria-live="polite">
-                <h2 class="font-bold text-lg mb-3">{{ t('order.cart') }}</h2>
-                <p v-if="cart.length === 0" class="text-gray-500 text-sm">{{ t('order.empty_cart') }}</p>
-                <ul class="space-y-2">
-                    <li v-for="(item, idx) in cart" :key="idx" class="flex items-center justify-between gap-2">
-                        <span class="text-sm flex-1">{{ item.quantity }}× {{ item.name }}</span>
-                        <span class="text-sm font-medium text-red-700">€{{ fmt(item.quantity * item.price) }}</span>
-                        <button @click="removeItem(idx)" class="text-gray-400 hover:text-red-600 text-lg" aria-label="Verwijder">✕</button>
-                    </li>
-                </ul>
-                <div v-if="cart.length" class="border-t mt-3 pt-3 flex justify-between font-bold">
-                    <span>{{ t('order.total') }}</span>
-                    <span class="text-red-700">€{{ fmt(cartTotal) }}</span>
-                </div>
-            </div>
-
-            <!-- Bestellen knop -->
+        <!-- Categoriefilter -->
+        <div style="margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 5px;">
             <button
-                @click="submitOrder"
-                :disabled="cart.length === 0 || submitting"
-                class="btn-primary w-full py-3 text-base disabled:opacity-50"
+                v-for="cat in allCategories" :key="cat.id"
+                @click="activeCategory = activeCategory === cat.id ? null : cat.id"
+                :style="{
+                    padding: '3px 10px',
+                    backgroundColor: activeCategory === cat.id ? '#8B0000' : '#ddd',
+                    color: activeCategory === cat.id ? '#FFFF00' : '#333',
+                    border: '1px solid #8B0000',
+                    cursor: 'pointer',
+                    fontSize: '13px'
+                }"
+            >
+                {{ cat.name }}
+            </button>
+        </div>
+
+        <!-- Gerechten tabel -->
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
+            <thead>
+                <tr style="background-color: #8B0000; color: #FFFF00;">
+                    <th style="padding: 5px 8px; text-align: left; width: 50px;">Nr.</th>
+                    <th style="padding: 5px 8px; text-align: left;">Gerecht</th>
+                    <th style="padding: 5px 8px; text-align: right;">Prijs</th>
+                    <th style="padding: 5px 8px; text-align: center; width: 80px;">Toevoegen</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="product in filteredProducts" :key="product.id"
+                    style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 4px 8px; font-family: monospace; color: #8B0000; font-weight: bold;">{{ product.menu_number }}</td>
+                    <td style="padding: 4px 8px;">{{ product.name }}</td>
+                    <td style="padding: 4px 8px; text-align: right;">€{{ fmt(product.current_price) }}</td>
+                    <td style="padding: 4px 8px; text-align: center;">
+                        <button @click="addItem(product)"
+                            style="background-color: #8B0000; color: white; border: none; padding: 3px 10px; cursor: pointer; font-size: 13px;">
+                            + Toevoegen
+                        </button>
+                    </td>
+                </tr>
+                <tr v-if="filteredProducts.length === 0">
+                    <td colspan="4" style="padding: 15px; text-align: center; color: #666;">Geen gerechten gevonden.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <hr style="border-color: #8B0000; margin: 10px 0;" />
+
+        <!-- Winkelwagen -->
+        <h3 style="color: #8B0000;">{{ t('order.cart') }}</h3>
+        <p v-if="cart.length === 0" style="color: #666; font-style: italic;">{{ t('order.empty_cart') }}</p>
+        <table v-else style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
+            <tr v-for="(item, idx) in cart" :key="idx" style="border-bottom: 1px solid #eee;">
+                <td style="padding: 4px 8px;">{{ item.quantity }}× {{ item.name }}</td>
+                <td style="padding: 4px 8px; text-align: right;">€{{ fmt(item.quantity * item.price) }}</td>
+                <td style="padding: 4px 8px; text-align: center; width: 40px;">
+                    <button @click="removeItem(idx)"
+                        style="background: none; border: none; color: #8B0000; cursor: pointer; font-weight: bold;">✕</button>
+                </td>
+            </tr>
+            <tr style="background-color: #f5f5f5; font-weight: bold;">
+                <td style="padding: 6px 8px;">{{ t('order.total') }}</td>
+                <td style="padding: 6px 8px; text-align: right; color: #8B0000;">€{{ fmt(cartTotal) }}</td>
+                <td></td>
+            </tr>
+        </table>
+
+        <!-- Bestellen knop -->
+        <div style="text-align: center; margin-top: 10px;">
+            <button @click="submitOrder" :disabled="cart.length === 0 || submitting"
+                style="background-color: #8B0000; color: #FFFF00; border: 2px solid #FFFF00; padding: 10px 40px; font-size: 16px; font-weight: bold; cursor: pointer;"
+                :style="{ opacity: cart.length === 0 ? 0.5 : 1 }"
             >
                 {{ submitting ? 'Bezig...' : t('order.place_order') }}
             </button>
@@ -106,8 +134,7 @@ const activeCategory = ref(null)
 const submitting  = ref(false)
 const errors      = ref({})
 const cart        = ref([])
-
-const form = ref({ customer_name: '', customer_phone: '' })
+const form        = ref({ customer_name: '', customer_phone: '' })
 
 const allProducts   = computed(() => page.props.products ?? [])
 const allCategories = computed(() => page.props.categories ?? [])
@@ -129,14 +156,12 @@ function addItem(product) {
     if (existing) { existing.quantity++ }
     else { cart.value.push({ product_id: product.id, name: product.name, price: product.current_price, quantity: 1 }) }
 }
-
 function removeItem(idx) { cart.value.splice(idx, 1) }
 
 function submitOrder() {
     errors.value = {}
     if (!form.value.customer_name) { errors.value.customer_name = 'Naam is verplicht'; return }
     if (!form.value.customer_phone) { errors.value.customer_phone = 'Telefoonnummer is verplicht'; return }
-
     submitting.value = true
     router.post(route('bestellen.store'), {
         ...form.value,
@@ -144,5 +169,8 @@ function submitOrder() {
     }, { onError: (e) => { errors.value = e; submitting.value = false } })
 }
 
-const fmt = (v) => Number(v).toFixed(2).replace('.', ',')
+const fmt = (v) => {
+    const n = parseFloat(v)
+    return isNaN(n) ? '0,00' : n.toFixed(2).replace('.', ',')
+}
 </script>

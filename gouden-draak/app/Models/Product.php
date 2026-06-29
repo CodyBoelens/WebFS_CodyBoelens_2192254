@@ -37,13 +37,23 @@ class Product extends Model
 
     /**
      * Geeft de huidige actieve prijs terug (rekening houdend met aanbiedingen).
+     * Gebruikt de al-geladen promotions relatie om N+1 queries te vermijden.
      */
     public function getCurrentPriceAttribute(): float
     {
-        $activePromo = $this->promotions()
-            ->where('active', true)
-            ->where('valid_from', '<=', now()->toDateString())
-            ->where('valid_until', '>=', now()->toDateString())
+        $today = now()->toDateString();
+
+        // Gebruik geladen relatie als die beschikbaar is, anders query
+        $promotions = $this->relationLoaded('promotions')
+            ? $this->promotions
+            : $this->promotions()->get();
+
+        $activePromo = $promotions
+            ->filter(function ($promo) use ($today) {
+                return $promo->active
+                    && substr($promo->valid_from, 0, 10) <= $today
+                    && substr($promo->valid_until, 0, 10) >= $today;
+            })
             ->first();
 
         if (! $activePromo) {

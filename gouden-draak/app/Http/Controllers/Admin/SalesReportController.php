@@ -4,10 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\SalesReport;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
-use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 /**
  * UC-19: Overzicht en download van dagelijkse verkoop rapportages.
@@ -23,13 +22,16 @@ class SalesReportController extends Controller
         ]);
     }
 
-    public function download(SalesReport $report): StreamedResponse
+    public function download(SalesReport $report): BinaryFileResponse
     {
-        abort_unless($report->file_path && Storage::exists($report->file_path), 404);
+        $fullPath = storage_path('app/' . $report->file_path);
 
-        return Storage::download(
-            $report->file_path,
-            'rapportage-' . $report->report_date->format('Y-m-d') . '.xlsx'
+        abort_unless($report->file_path && file_exists($fullPath), 404);
+
+        return response()->download(
+            $fullPath,
+            'rapportage-' . $report->report_date->format('Y-m-d') . '.xlsx',
+            ['Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']
         );
     }
 }

@@ -14,17 +14,11 @@ class User extends Authenticatable
     protected $hidden = ['password', 'remember_token'];
 
     protected $casts = [
-        'email_verified_at' => 'datetime',
-        'password'          => 'hashed',
+        'password' => 'hashed',
     ];
 
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
-    }
-
-    public function isKassa(): bool
-    {
-        return in_array($this->role, ['admin', 'kassa']);
     }
 }

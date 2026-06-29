@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{{ config('app.name', 'De Gouden Draak') }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @routes
     @inertiaHead
 </head>
 <body class="bg-gray-50 text-gray-900 antialiased">

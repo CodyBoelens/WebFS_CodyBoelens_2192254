@@ -1,5 +1,4 @@
 <template>
-    <!-- Tablet view: full screen, touch-vriendelijk -->
     <div class="min-h-screen bg-red-900 text-white flex flex-col">
         <!-- Header -->
         <header class="bg-red-800 px-6 py-4 flex items-center justify-between shadow-lg">
@@ -33,8 +32,8 @@
                     <button
                         v-for="product in currentProducts" :key="product.id"
                         @click="addToCart(product)"
-                        class="w-full bg-red-700 hover:bg-red-600 active:bg-red-500 rounded-xl p-3 text-left transition-colors"
                         :disabled="!canOrder"
+                        class="w-full bg-red-700 hover:bg-red-600 active:bg-red-500 rounded-xl p-3 text-left transition-colors disabled:opacity-50"
                     >
                         <div class="flex justify-between items-start">
                             <div>
@@ -51,7 +50,7 @@
             <main class="flex-1 flex flex-col p-4">
                 <h2 class="text-lg font-bold mb-3">{{ t('order.cart') }}</h2>
 
-                <!-- Wachtmelding (US-1: 10 min cooldown) -->
+                <!-- Wachtmelding -->
                 <div v-if="!canOrder" class="bg-yellow-500 text-yellow-900 rounded-xl p-3 mb-4 text-sm font-medium">
                     ⏳ {{ t('tablet.wait_message', { minutes: waitMinutes }) }}
                 </div>
@@ -59,6 +58,7 @@
                     {{ t('tablet.max_rounds') }}
                 </div>
 
+                <!-- Winkelwagen items -->
                 <div class="flex-1 overflow-y-auto">
                     <p v-if="cart.length === 0" class="text-red-300 text-center mt-8">{{ t('order.empty_cart') }}</p>
                     <ul class="space-y-2">
@@ -80,28 +80,54 @@
 
                 <!-- Totaal + knoppen -->
                 <div class="border-t border-red-700 pt-4 mt-4">
-                    <div class="flex justify-between font-bold text-lg mb-4">
-                        <span>{{ t('order.total') }}</span>
+                    <!-- Winkelwagen totaal -->
+                    <div class="flex justify-between font-bold text-lg mb-3">
+                        <span>{{ t('order.cart') }}</span>
                         <span>€{{ fmt(cartTotal) }}</span>
                     </div>
-                    <div class="grid grid-cols-2 gap-3">
+
+                    <!-- Lopende bestelling samenvatting -->
+                    <div v-if="openOrder" class="bg-red-700 rounded-xl p-3 mb-3 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-red-200">Totaal tafel tot nu:</span>
+                            <span class="font-bold">€{{ fmt(openOrder.total) }}</span>
+                        </div>
+                        <div class="flex justify-between mt-1">
+                            <span class="text-red-200">Ronde:</span>
+                            <span class="font-bold">{{ openOrder.round }} / 5</span>
+                        </div>
+                    </div>
+
+                    <!-- Actieknoppen -->
+                    <div class="grid grid-cols-2 gap-3 mb-3">
                         <!-- US-5: Hulp vragen -->
                         <button
                             @click="requestHelp"
                             :disabled="helpSent"
-                            class="py-4 rounded-xl font-bold text-base bg-yellow-500 hover:bg-yellow-400 active:bg-yellow-300 text-yellow-900 disabled:opacity-60 transition-colors"
+                            class="py-4 rounded-xl font-bold text-base bg-yellow-500 hover:bg-yellow-400 text-yellow-900 disabled:opacity-60 transition-colors"
                         >
                             {{ helpSent ? t('tablet.help_sent') : t('tablet.help_button') }}
                         </button>
+
                         <!-- US-1: Bestellen -->
                         <button
                             @click="placeOrder"
                             :disabled="cart.length === 0 || !canOrder || submitting"
-                            class="py-4 rounded-xl font-bold text-base bg-white hover:bg-gray-100 active:bg-gray-200 text-red-800 disabled:opacity-50 transition-colors"
+                            class="py-4 rounded-xl font-bold text-base bg-white hover:bg-gray-100 text-red-800 disabled:opacity-50 transition-colors"
                         >
                             {{ submitting ? '...' : t('tablet.order_button') }}
                         </button>
                     </div>
+
+                    <!-- Rekening betalen -->
+                    <button
+                        v-if="openOrder"
+                        @click="betalen"
+                        :disabled="betalingSent"
+                        class="w-full py-4 rounded-xl font-bold text-base bg-green-500 hover:bg-green-400 text-white disabled:opacity-60 transition-colors"
+                    >
+                        {{ betalingSent ? '✓ Medewerker komt eraan!' : '💳 Rekening vragen' }}
+                    </button>
                 </div>
             </main>
         </div>
@@ -111,6 +137,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { router } from '@inertiajs/vue3'
 import axios from 'axios'
 
 const { t } = useI18n()
@@ -126,6 +153,7 @@ const activeCategory = ref(props.categories[0]?.id ?? null)
 const cart           = ref([])
 const helpSent       = ref(false)
 const submitting     = ref(false)
+const betalingSent   = ref(false)
 
 const currentProducts = computed(() =>
     props.categories.find(c => c.id === activeCategory.value)?.active_products ?? []
@@ -133,7 +161,6 @@ const currentProducts = computed(() =>
 
 const cartTotal = computed(() => cart.value.reduce((s, i) => s + i.quantity * i.price, 0))
 
-// Bereken resterende minuten (eenvoudige benadering; server is leidend)
 const waitMinutes = computed(() => {
     if (!props.openOrder?.last_order_at) return 0
     const diff = 10 - Math.floor((Date.now() - new Date(props.openOrder.last_order_at)) / 60000)
@@ -148,6 +175,7 @@ function addToCart(product) {
 function decrease(idx) { if (cart.value[idx].quantity > 1) cart.value[idx].quantity--; else cart.value.splice(idx, 1) }
 function increase(idx) { cart.value[idx].quantity++ }
 
+// US-1: Bestelling plaatsen
 async function placeOrder() {
     if (!cart.value.length || !props.canOrder) return
     submitting.value = true
@@ -156,7 +184,7 @@ async function placeOrder() {
             items: cart.value.map(i => ({ product_id: i.product_id, quantity: i.quantity }))
         })
         cart.value = []
-        alert('Bestelling geplaatst!')
+        router.reload({ only: ['openOrder', 'canOrder', 'roundsLeft'] })
     } catch (e) {
         alert(e.response?.data?.message ?? 'Er ging iets mis.')
     } finally {
@@ -175,5 +203,21 @@ async function requestHelp() {
     }
 }
 
-const fmt = (v) => Number(v).toFixed(2).replace('.', ',')
+// Rekening betalen — stuurt hulpverzoek "Klant wil betalen"
+async function betalen() {
+    if (!confirm('Wilt u de rekening aanvragen? Een medewerker komt naar uw tafel.')) return
+    try {
+        await axios.post(`/tablet/${props.table.id}/hulp`, { type: 'betalen' })
+        betalingSent.value = true
+    } catch (e) {
+        // 409 = al een open verzoek, ook dan feedback tonen
+        if (e.response?.status === 409) betalingSent.value = true
+        else alert('Kon verzoek niet indienen.')
+    }
+}
+
+const fmt = (v) => {
+    const n = parseFloat(v)
+    return isNaN(n) ? '0,00' : n.toFixed(2).replace('.', ',')
+}
 </script>

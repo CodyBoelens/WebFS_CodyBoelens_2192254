@@ -27,8 +27,9 @@ class Promotion extends Model
 
     public function scopeActive($query)
     {
+        $today = now()->toDateString();
         return $query->where('active', true)
-            ->where('valid_from', '<=', now()->toDateString())
-            ->where('valid_until', '>=', now()->toDateString());
+            ->whereRaw("DATE(valid_from) <= ?", [$today])
+            ->whereRaw("DATE(valid_until) >= ?", [$today]);
     }
 }

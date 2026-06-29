@@ -15,6 +15,14 @@
                     class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-red-800 transition-colors">
                     🍜 {{ t('admin.menu_management') }}
                 </Link>
+                <Link :href="route('admin.categories.index')"
+                    class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-red-800 transition-colors">
+                    📂 Categorieën
+                </Link>
+                <Link :href="route('admin.promotions.index')"
+                    class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-red-800 transition-colors">
+                    🏷️ Aanbiedingen
+                </Link>
                 <Link :href="route('admin.rapportages.index')"
                     class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-red-800 transition-colors">
                     📈 {{ t('admin.reports') }}
@@ -22,6 +30,10 @@
                 <Link :href="route('admin.hulpverzoeken')"
                     class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-red-800 transition-colors">
                     🔔 {{ t('admin.help_requests') }}
+                </Link>
+                <Link :href="route('admin.bestellingen.index')"
+                    class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-red-800 transition-colors">
+                    📋 Bestellingen
                 </Link>
             </nav>
             <div class="px-3 py-4 border-t border-red-800 text-xs">
@@ -47,7 +59,7 @@
 </template>
 
 <script setup>
-import { Link, usePage } from '@inertiajs/vue3'
+import { Link } from '@inertiajs/vue3'
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 </script>

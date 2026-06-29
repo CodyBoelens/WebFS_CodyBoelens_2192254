@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 
 class Order extends Model
 {
@@ -33,7 +34,7 @@ class Order extends Model
      */
     public function recalculateTotal(): void
     {
-        $this->total = $this->items()->sum(\DB::raw('quantity * unit_price'));
+        $this->total = $this->items()->sum(DB::raw('quantity * unit_price'));
         $this->save();
     }
 

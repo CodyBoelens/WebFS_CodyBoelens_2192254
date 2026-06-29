@@ -7,7 +7,6 @@ use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -20,15 +19,22 @@ class MenuController extends Controller
     public function index(): Response
     {
         return Inertia::render('Admin/Menu/Index', [
-            'categories' => Category::with('products')->orderBy('sort_order')->get(),
+            'categories' => Category::with(['products' => fn($q) => $q->orderByRaw("
+                CAST(menu_number AS INTEGER),
+                LENGTH(menu_number),
+                menu_number
+            ")])
+                ->orderBy('sort_order')
+                ->get(),
         ]);
     }
 
     public function create(): Response
     {
         return Inertia::render('Admin/Menu/Form', [
-            'categories' => Category::where('active', true)->orderBy('sort_order')->get(['id', 'name']),
-            'product'    => null,
+            'categories'  => Category::where('active', true)->orderBy('sort_order')->get(['id', 'name']),
+            'product'     => null,
+            'allProducts' => Product::where('active', true)->orderBy('menu_number')->get(['id', 'menu_number', 'name', 'category_id']),
         ]);
     }
 
@@ -57,8 +63,9 @@ class MenuController extends Controller
     public function edit(Product $menu): Response
     {
         return Inertia::render('Admin/Menu/Form', [
-            'categories' => Category::where('active', true)->orderBy('sort_order')->get(['id', 'name']),
-            'product'    => $menu->load('category'),
+            'categories'  => Category::where('active', true)->orderBy('sort_order')->get(['id', 'name']),
+            'product'     => $menu->load('category'),
+            'allProducts' => Product::where('active', true)->orderBy('menu_number')->get(['id', 'menu_number', 'name', 'category_id']),
         ]);
     }
 

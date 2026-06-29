@@ -13,6 +13,7 @@
                 <thead class="bg-gray-50 text-gray-500 text-xs uppercase">
                     <tr>
                         <th class="px-4 py-3 text-left">Tafel</th>
+                        <th class="px-4 py-3 text-left">Type</th>
                         <th class="px-4 py-3 text-left">Tijdstip</th>
                         <th class="px-4 py-3 text-left">Status</th>
                         <th class="px-4 py-3 text-right">Actie</th>
@@ -21,6 +22,13 @@
                 <tbody class="divide-y divide-gray-100">
                     <tr v-for="req in openRequests" :key="req.id" class="hover:bg-yellow-50">
                         <td class="px-4 py-3 font-bold text-lg">Tafel {{ req.table?.number }}</td>
+                        <td class="px-4 py-3">
+                            <span :class="req.type === 'betalen'
+                                ? 'badge bg-green-100 text-green-800'
+                                : 'badge bg-yellow-100 text-yellow-800'">
+                                {{ req.type === 'betalen' ? '💳 Wil betalen' : '🙋 Hulp nodig' }}
+                            </span>
+                        </td>
                         <td class="px-4 py-3 text-gray-500">{{ formatTime(req.created_at) }}</td>
                         <td class="px-4 py-3">
                             <span class="badge bg-yellow-100 text-yellow-800">Open</span>

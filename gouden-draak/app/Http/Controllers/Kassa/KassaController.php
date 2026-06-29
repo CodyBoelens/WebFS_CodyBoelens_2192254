@@ -22,7 +22,22 @@ class KassaController extends Controller
     public function index(): Response
     {
         return Inertia::render('Kassa/Index', [
-            'categories' => Category::with('activeProducts')->where('active', true)->orderBy('sort_order')->get(),
+            'categories' => Category::with(['activeProducts.promotions'])
+                ->where('active', true)
+                ->orderBy('sort_order')
+                ->get()
+                ->map(fn($cat) => [
+                    'id'   => $cat->id,
+                    'name' => $cat->name,
+                    'active_products' => $cat->activeProducts->map(fn($p) => [
+                        'id'            => $p->id,
+                        'menu_number'   => $p->menu_number,
+                        'name'          => $p->name,
+                        'price'         => (float) $p->price,
+                        'current_price' => (float) $p->current_price,
+                        'category_id'   => $p->category_id,
+                    ]),
+                ]),
             'openOrders' => Order::with(['items.product', 'table'])
                 ->whereIn('status', ['open', 'in_behandeling'])
                 ->where('source', 'kassa')

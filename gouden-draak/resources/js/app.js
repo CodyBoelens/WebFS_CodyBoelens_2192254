@@ -2,17 +2,23 @@ import { createApp, h } from 'vue'
 import { createInertiaApp } from '@inertiajs/vue3'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
 import { createI18n } from 'vue-i18n'
-import { ZiggyVue } from '../../vendor/tightenco/ziggy'
+import { ZiggyVue } from 'ziggy-js'
 import nl from './lang/nl.json'
 import en from './lang/en.json'
 import '../css/app.css'
 
 const appName = import.meta.env.VITE_APP_NAME || 'De Gouden Draak'
 
-// UC-13: i18n instelling
+// UC-13: bepaal initiële locale — sessie > browser-taal > standaard NL
+const serverLocale = document.documentElement.lang
+const browserLocale = navigator.language?.startsWith('nl') ? 'nl' : 'en'
+const initialLocale = (serverLocale && ['nl','en'].includes(serverLocale))
+    ? serverLocale
+    : browserLocale
+
 const i18n = createI18n({
     legacy: false,
-    locale: document.documentElement.lang || 'nl',
+    locale: initialLocale,
     fallbackLocale: 'nl',
     messages: { nl, en },
 })

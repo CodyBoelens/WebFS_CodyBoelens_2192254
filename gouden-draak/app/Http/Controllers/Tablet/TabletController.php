@@ -24,7 +24,23 @@ class TabletController extends Controller
 
         return Inertia::render('Tablet/Index', [
             'table'      => $table,
-            'categories' => Category::with('activeProducts')->where('active', true)->orderBy('sort_order')->get(),
+            'categories' => Category::with(['activeProducts.promotions'])
+                ->where('active', true)
+                ->orderBy('sort_order')
+                ->get()
+                ->map(fn($cat) => [
+                    'id'   => $cat->id,
+                    'name' => $cat->name,
+                    'active_products' => $cat->activeProducts->map(fn($p) => [
+                        'id'            => $p->id,
+                        'menu_number'   => $p->menu_number,
+                        'name'          => $p->name,
+                        'description'   => $p->description,
+                        'price'         => (float) $p->price,
+                        'current_price' => (float) $p->current_price,
+                        'image'         => $p->image ? asset('storage/' . $p->image) : null,
+                    ]),
+                ]),
             'openOrder'  => $openOrder?->load('items.product'),
             'canOrder'   => ! $openOrder || $openOrder->canPlaceNewRound(),
             'roundsLeft' => $openOrder ? (5 - $openOrder->round) : 5,
@@ -82,16 +98,41 @@ class TabletController extends Controller
     /**
      * US-5: Hulp aanvragen vanaf tablet.
      */
-    public function requestHelp(Table $table): JsonResponse
+    public function requestHelp(Request $request, Table $table): JsonResponse
     {
-        $exists = HelpRequest::where('table_id', $table->id)->where('status', 'open')->exists();
+        $type = $request->input('type', 'hulp'); // 'hulp' of 'betalen'
+
+        $exists = HelpRequest::where('table_id', $table->id)
+            ->where('status', 'open')
+            ->where('type', $type)
+            ->exists();
 
         if ($exists) {
-            return response()->json(['message' => 'Hulpverzoek al ingediend.'], 409);
+            return response()->json(['message' => 'Verzoek al ingediend.'], 409);
         }
 
-        $help = HelpRequest::create(['table_id' => $table->id, 'status' => 'open']);
+        $help = HelpRequest::create([
+            'table_id' => $table->id,
+            'type'     => $type,
+            'status'   => 'open',
+        ]);
 
-        return response()->json(['message' => 'Hulpverzoek ingediend.', 'id' => $help->id], 201);
+        return response()->json(['message' => 'Verzoek ingediend.', 'id' => $help->id], 201);
+    }
+
+    /**
+     * Markeer de open bestelling van een tafel als betaald.
+     */
+    public function markPaid(Table $table): JsonResponse
+    {
+        $openOrder = $table->openOrder();
+
+        if (! $openOrder) {
+            return response()->json(['message' => 'Geen open bestelling gevonden.'], 404);
+        }
+
+        $openOrder->update(['status' => 'betaald']);
+
+        return response()->json(['message' => 'Bestelling gemarkeerd als betaald.'], 200);
     }
 }

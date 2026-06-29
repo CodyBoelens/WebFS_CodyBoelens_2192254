@@ -15,11 +15,14 @@ class Category extends Model
 
     public function products(): HasMany
     {
-        return $this->hasMany(Product::class)->orderBy('sort_order');
+        return $this->hasMany(Product::class)
+            ->orderByRaw("CAST(menu_number AS INTEGER), LENGTH(menu_number), menu_number");
     }
 
     public function activeProducts(): HasMany
     {
-        return $this->hasMany(Product::class)->where('active', true)->orderBy('sort_order');
+        return $this->hasMany(Product::class)
+            ->where('active', true)
+            ->orderByRaw("CAST(menu_number AS INTEGER), LENGTH(menu_number), menu_number");
     }
 }

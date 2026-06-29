@@ -58,7 +58,7 @@ class TakeawayController extends Controller
             $qrContent .= "{$item->product->menu_number} - {$item->product->name} x{$item->quantity}\n";
         }
 
-        $qrCode = base64_encode(QrCode::format('png')->size(250)->generate($qrContent));
+        $qrCode = base64_encode(QrCode::format('svg')->size(250)->generate($qrContent));
 
         return Inertia::render('Website/Bedankt', [
             'order'  => $order->load('items.product'),

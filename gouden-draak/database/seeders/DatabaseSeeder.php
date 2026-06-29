@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
+use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\Table;
 use App\Models\User;
@@ -92,6 +94,25 @@ class DatabaseSeeder extends Seeder
                 'price'       => $price,
                 'active'      => true,
                 'sort_order'  => $i,
+            ]);
+        }
+
+        // Standaard opmerkingen seeden (US-10) zodat de suggestielijst meteen gevuld is
+        $demoOrder = Order::create([
+            'source' => 'kassa', 'status' => 'betaald', 'round' => 1, 'total' => 0,
+        ]);
+        $standaardOpmerkingen = [
+            'Geen ui', 'Extra saus', 'Niet te pittig', 'Extra pittig',
+            'Geen koriander', 'Allergie: noten', 'Extra rijst', 'Weinig zout',
+        ];
+        $eersteProduct = Product::first();
+        foreach ($standaardOpmerkingen as $opmerking) {
+            OrderItem::create([
+                'order_id'   => $demoOrder->id,
+                'product_id' => $eersteProduct->id,
+                'quantity'   => 1,
+                'unit_price' => $eersteProduct->price,
+                'note'       => $opmerking,
             ]);
         }
     }
